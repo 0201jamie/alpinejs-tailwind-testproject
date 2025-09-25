@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes App</title>
+    <script src="src/index.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+    </style>
+</head>
+
+<body x-data="{name: '', visit_count: $persist(0)}" x-init="visit_count++">
+<div x-init="if (name === '') {$refs.dialog.showModal()}"
+     class=" mx-auto">
+    <section class="">
+        <dialog x-ref="dialog" class="bg-gray-900 rounded-xl p-8 fixed inset-0 m-auto z-3 shadow-lg">
+            <button class="font-bold text-red-500 absolute top-4 right-4 cursor-pointer hover:opacity-75 transition duration-300"
+                    @click="$refs.dialog.close()">X
+            </button>
+            <h2 class="text-xl mb-2 text-white">Nenne uns bitte deinen Namen</h2>
+            <div class="flex justify-between gap-3">
+                <input autofocus maxlength="15" x-model="name" @keyup.enter="$refs.dialog.close()" type="text"
+                       class="text-white border-1 border-gray-700 p-2 w-sm" placeholder="Dein Name...">
+                <button class="text-3xl text-white bg-gradient-to-r from-green-500 to-blue-400 rounded-md py-2 px-3 hover:opacity-75"
+                        @click="$refs.dialog.close()">⏎
+                </button>
+            </div>
+        </dialog>
+        <header
+                x-data="{
+                nav_buttons: ['Features', 'Solutions', 'Resources', 'Pricing']
+            }"
+                class="flex justify-between items-center bg-gray-900"
+        >
+            <div>
+                <img
+                        src="Assets/logo.png" alt="Logo"
+                        class="w-40 cursor-pointer mx-10 hover:opacity-75 transition duration-500"
+                >
+            </div>
+            <div>
+                <template x-for="nav_button in nav_buttons">
+                    <button
+                            x-text="nav_button"
+                            class="bg-t h-auto h-10 p-3 my-5 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
+                    >
+                    </button>
+                </template>
+            </div>
+            <div class="mx-10" @notify="alert($event.detail.message)">
+                <button
+                        class="bg-t h-auto h-10 p-3 my-5 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
+                        @click="$refs.dialog.showModal()"
+                >Change Name
+                </button>
+                <button
+                        class="h-auto h-10 p-3 my-5 ml-5 text-white rounded-md cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-75 transition duration-500"
+                        @click="$dispatch('notify', { message: 'Die Demo ist aktuell nicht verfügbar...' })"
+                >
+                    Get Demo
+                </button>
+            </div>
+        </header>
+        <div
+                x-data=""
+                class="flex flex-col justify-center items-center h-screen bg-gray-800"
+        >
+            <h1
+                    x-text="'Willkommen, ' + name + '👋'"
+                    class="text-4xl font-bold text-white mb-4"
+            ></h1>
+            <p
+                    class="text-gray-300 w-170 text-center mb-15"
+            >
+                Deine Notizen, dein Wissen. Erfasse Ideen, verknüpfe Konzepte und organisiere dein Wissen in einer App,
+                die
+                dir die volle Kontrolle gibt. Erstelle ein persönliches Wiki, indem du Notizen miteinander verknüpfst
+                und so
+                neue Erkenntnisse gewinnst. Dank einfacher Markdown-Formatierung und offline-Zugriff sind deine Gedanken
+                immer nur einen Klick entfernt.
+            </p>
+            <a href=""
+               download="secret_image.jpg">
+                <button
+                        x-text="'Download'"
+                        class="bg-gradient-to-r from-green-500 to-blue-400 rounded-md text-white p-3 font-bold cursor-pointer hover:scale-105 mb-5"
+                >
+
+                </button>
+            </a>
+            <p x-text="'Du hast diese Seite: ' + visit_count + ' besucht!'" class="text-gray-400"></p>
+        </div>
+    </section>
+</div>
+</body>
+</html>
