@@ -12,14 +12,42 @@
             background-color: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(5px);
         }
+    </style>
+    <style>
+        .navbuttons {
+            display: none;
+        }
 
+        .rightbuttons {
+            display: none;
+        }
+
+        .burgermenu {
+            display: block;
+        }
+
+        @media screen and (min-width: 1200px) {
+            .rightbuttons {
+                display: block;
+            }
+
+            .burgermenu {
+                display: none;
+            }
+        }
+
+        @media screen and (min-width: 980px) {
+            .navbuttons {
+                display: block;
+            }
+        }
     </style>
 </head>
 
 <body x-data="{name: '', visit_count: $persist(0)}" x-init="visit_count++">
 <div x-init="if (name === '') {$refs.dialog.showModal()}"
      class=" mx-auto">
-    <section class="">
+    <section>
         <dialog x-ref="dialog" class="bg-gray-900 rounded-xl p-8 fixed inset-0 m-auto z-3 shadow-lg">
             <button class="font-bold text-red-500 absolute top-4 right-4 cursor-pointer hover:opacity-75 transition duration-300"
                     @click="$refs.dialog.close()">X
@@ -37,7 +65,7 @@
                 x-data="{
                 nav_buttons: ['Features', 'Solutions', 'Resources', 'Pricing']
             }"
-                class="flex justify-between items-center bg-gray-900"
+                class="flex justify-between items-center bg-gray-900 h-20"
         >
             <div>
                 <img
@@ -45,28 +73,30 @@
                         class="w-40 cursor-pointer mx-10 hover:opacity-75 transition duration-500"
                 >
             </div>
-            <div>
+            <div class="navbuttons">
                 <template x-for="nav_button in nav_buttons">
                     <button
                             x-text="nav_button"
-                            class="bg-t h-auto h-10 p-3 my-5 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
+                            class="bg-t h-auto h-10 p-3 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
                     >
                     </button>
                 </template>
             </div>
-            <div class="mx-10" @notify="alert($event.detail.message)">
+            <div class="mx-10 rightbuttons" @notify="alert($event.detail.message)">
                 <button
-                        class="bg-t h-auto h-10 p-3 my-5 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
+                        class="bg-t h-auto h-10 p-3 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
                         @click="$refs.dialog.showModal()"
                 >Change Name
                 </button>
                 <button
-                        class="h-auto h-10 p-3 my-5 ml-5 text-white rounded-md cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-75 transition duration-500"
+                        class="h-auto h-10 p-3 ml-5 text-white rounded-md cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-75 transition duration-500"
                         @click="$dispatch('notify', { message: 'Die Demo ist aktuell nicht verfügbar...' })"
                 >
                     Get Demo
                 </button>
             </div>
+            <img src="Assets/burgerbar.png"
+                 class="burgermenu text-white cursor-pointer h-10 mr-10 ml-40 hover:opacity-75 transition duration-500">
         </header>
         <div
                 x-data=""
@@ -90,12 +120,12 @@
                download="secret_image.jpg">
                 <button
                         x-text="'Download'"
-                        class="bg-gradient-to-r from-green-500 to-blue-400 rounded-md text-white p-3 font-bold cursor-pointer hover:scale-105 mb-5"
+                        class="bg-gradient-to-r from-green-500 to-blue-400 rounded-md mb-5 text-white p-3 font-bold cursor-pointer hover:scale-105 ring-5 ring-gray-900/5"
                 >
 
                 </button>
             </a>
-            <p x-text="'Du hast diese Seite: ' + visit_count + ' besucht!'" class="text-gray-400"></p>
+            <p x-text="'Du hast diese Seite ' + visit_count + 'x besucht!'" class="text-gray-400"></p>
         </div>
     </section>
 </div>
