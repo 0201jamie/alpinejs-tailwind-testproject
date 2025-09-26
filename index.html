@@ -47,7 +47,7 @@
 <body x-data="{name: '', visit_count: $persist(0)}" x-init="visit_count++">
 <div x-init="if (name === '') {$refs.dialog.showModal()}"
      class=" mx-auto">
-    <section>
+    <section @notify="alert($event.detail.message)">
         <dialog x-ref="dialog" class="bg-gray-900 rounded-xl p-8 fixed inset-0 m-auto z-3 shadow-lg">
             <button class="font-bold text-red-500 absolute top-4 right-4 cursor-pointer hover:opacity-75 transition duration-300"
                     @click="$refs.dialog.close()">X
@@ -82,7 +82,7 @@
                     </button>
                 </template>
             </div>
-            <div class="mx-10 rightbuttons" @notify="alert($event.detail.message)">
+            <div class="mx-10 rightbuttons">
                 <button
                         class="bg-t h-auto h-10 p-3 mx-5 text-white hover:bg-gray-600 rounded-md cursor-pointer"
                         @click="$refs.dialog.showModal()"
@@ -95,19 +95,79 @@
                     Get Demo
                 </button>
             </div>
-            <img src="Assets/burgerbar.png"
-                 class="burgermenu text-white cursor-pointer h-10 mr-10 ml-40 hover:opacity-75 transition duration-500">
+
+            <div class="flex justify-center burgermenu mr-10">
+                <div
+                        x-data="{
+            open: false,
+            toggle() {
+                if (this.open) {
+                    return this.close()
+                }
+
+                this.$refs.button.focus()
+
+                this.open = true
+            },
+            close(focusAfter) {
+                if (! this.open) return
+
+                this.open = false
+
+                focusAfter && focusAfter.focus()
+            }
+        }"
+                        x-on:keydown.escape.prevent.stop="close($refs.button)"
+                        x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+                        x-id="['dropdown-button']"
+                        class="relative"
+                >
+                    <!-- Button -->
+                    <button x-ref="button"
+                            x-on:click="toggle()"
+                            :aria-expanded="open"
+                            :aria-controls="$id('dropdown-button')"
+                            type="button"
+                            class="relative flex w-auto items-center whitespace-nowrap justify-center rounded-lg bg-t text-gray-800"
+                    >
+                        <img src="Assets/burgermenu.png"
+                             class="burgermenu cursor-pointer h-8 hover:opacity-75 transition duration-500">
+                    </button>
+
+                    <!-- Panel -->
+                    <div x-ref="panel"
+                         x-show="open"
+                         x-transition.origin.top.left
+                         x-on:click.outside="close($refs.button)"
+                         :id="$id('dropdown-button')"
+                         x-cloak
+                         class="absolute right-0 min-w-48 rounded-lg shadow-sm mt-2 z-10 origin-top-left bg-gray-700 p-1.5 outline-none text-white"
+                         x-data="{ dropdown_buttons: ['💡 Features', '✅ Solutions', '📚 Resources', '💰 Pricing', '✍️ Change Name', '🖥️ Get Demo'] }"
+                    >
+                        <a href="#delete" x-text="dropdown_buttons[0]"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                        <a href="#delete" x-text="dropdown_buttons[1]"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                        <a href="#delete" x-text="dropdown_buttons[2]"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                        <a href="#delete" x-text="dropdown_buttons[3]"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                        <a href="#delete" x-text="dropdown_buttons[4]" @click="$refs.dialog.showModal(); open = false"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                        <a href="#delete" x-text="dropdown_buttons[5]"
+                           @click="$dispatch('notify', { message: 'Die Demo ist aktuell nicht verfügbar...'}); open = false"
+                           class="px-2 lg:py-1.5 py-2 w-full flex items-center rounded-md transition-colors text-left text-white hover:bg-gray-600 focus-visible:bg-gray-600 focus-visible:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"></a>
+                    </div>
+                </div>
+            </div>
         </header>
-        <div
-                x-data=""
-                class="flex flex-col justify-center items-center h-screen bg-gray-800"
+        <div x-data=""
+             class="flex flex-col justify-center items-center h-screen bg-gray-800"
         >
-            <h1
-                    x-text="'Willkommen, ' + name + '👋'"
-                    class="text-4xl font-bold text-white mb-4"
+            <h1 x-text="'Willkommen, ' + name + '👋'"
+                class="text-4xl font-bold text-white mb-4"
             ></h1>
-            <p
-                    class="text-gray-300 w-170 text-center mb-15"
+            <p class="text-gray-300 w-170 text-center mb-15"
             >
                 Deine Notizen, dein Wissen. Erfasse Ideen, verknüpfe Konzepte und organisiere dein Wissen in einer App,
                 die
@@ -118,14 +178,14 @@
             </p>
             <a href=""
                download="secret_image.jpg">
-                <button
-                        x-text="'Download'"
+                <button x-text="'Download'"
                         class="bg-gradient-to-r from-green-500 to-blue-400 rounded-md mb-5 text-white p-3 font-bold cursor-pointer hover:scale-105 ring-5 ring-gray-900/5"
                 >
-
                 </button>
             </a>
-            <p x-text="'Du hast diese Seite ' + visit_count + 'x besucht!'" class="text-gray-400"></p>
+            <p x-text="'Du hast diese Seite ' + visit_count + 'x besucht!'"
+               class="text-gray-400">
+            </p>
         </div>
     </section>
 </div>
